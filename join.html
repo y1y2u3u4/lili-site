@@ -1,0 +1,22 @@
+<!doctype html><html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>加入栗栗家人 · Join Lili family</title><link rel="stylesheet" href="style.css">
+<style>.code{font:700 34px/1.2 ui-monospace,Menlo,monospace;letter-spacing:4px}.btn{display:block;text-align:center;padding:14px;border-radius:14px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600;margin:10px 0}.btn2{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}</style>
+</head><body><main>
+<h1 id="title">加入栗栗家人</h1>
+<p class="muted" id="sub">Join Lili family</p>
+<div class="card">
+<p id="lead">装好栗栗后，点下面的按钮就能加入，之后你们设的提醒会直接在对方手机上响。</p>
+<p class="muted">家人码 · Family code</p><p class="code" id="code">——</p>
+<a class="btn" id="open" href="#">在栗栗中打开 · Open in Lili</a>
+<a class="btn btn2" href="https://testflight.apple.com/join/c9KfEtJx">还没安装？获取栗栗 · Get Lili</a>
+</div>
+<p class="muted" id="wechat" style="display:none">在微信里打不开？点右上角 “···” → “在浏览器打开”；或者复制上面的家人码，在栗栗「家人」页输入。<br>In WeChat? Tap “···” → Open in Browser, or copy the code and enter it on the Family tab.</p>
+<p class="muted">也可以在栗栗「家人 → 改为输入家人码」里输入上面的码。 You can also enter the code on Lili’s Family tab.</p>
+<script>
+var q=new URLSearchParams(location.search), c=(q.get('c')||'').toUpperCase().replace(/[^2-9A-HJ-NP-Z]/g,'').slice(0,6), n=q.get('n')||'';
+if(c){document.getElementById('code').textContent=c;}
+if(n){document.getElementById('title').textContent=n+' 邀请你加入栗栗家人';document.getElementById('sub').textContent=n+' invited you to remind each other with Lili';}
+document.getElementById('open').href='lili://join?c='+encodeURIComponent(c)+'&n='+encodeURIComponent(n);
+if(/MicroMessenger/i.test(navigator.userAgent)){document.getElementById('wechat').style.display='block';}
+</script>
+</main></body></html>
