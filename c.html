@@ -1,0 +1,49 @@
+<!doctype html><html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>栗栗提醒 · Lili reminder</title><link rel="stylesheet" href="style.css">
+<style>
+body{font-size:20px}
+h1{font-size:30px;line-height:1.35}
+.task{font-size:34px;font-weight:700;line-height:1.3;margin:6px 0 2px}
+.btn{display:block;width:100%;box-sizing:border-box;text-align:center;padding:20px;border-radius:18px;border:0;background:var(--accent);color:#fff;font:700 26px/1.2 inherit;margin:18px 0 8px;cursor:pointer}
+@media (prefers-color-scheme: dark){.btn{color:#1B2A28}}
+.btn[disabled]{opacity:.55}
+.done{font-size:28px;font-weight:700;color:var(--accent)}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:16px;padding:12px 0;cursor:pointer}
+</style>
+</head><body><main>
+<p class="muted" id="from">栗栗提醒</p>
+<div class="card">
+  <p class="task" id="task">正在打开…</p>
+  <p class="muted" id="when"></p>
+  <button class="btn" id="yes" disabled>我做完了 ✓</button>
+  <p class="done" id="ok" hidden></p>
+</div>
+<p class="muted" id="note"></p>
+<button class="link" id="stop" hidden>不想再收到这些短信</button>
+<script>
+var API='https://ienodkjngoywicwsoixg.supabase.co/functions/v1/lili-care';
+var token=(location.hash||'').slice(1).replace(/[^2-9A-HJ-NP-Za-km-z]/g,'').slice(0,10);
+var $=function(id){return document.getElementById(id)}, zh=true, info=null;
+function t(a,b){return zh?a:b}
+function post(action){return fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:action,token:token})}).then(function(r){return r.json()})}
+function show(r){
+  info=r; zh=(r.lang||'zh').indexOf('zh')===0;
+  document.documentElement.lang=zh?'zh-Hans':'en';
+  var owner=r.owner||t('家人','your family');
+  $('from').textContent=t('来自栗栗 · '+owner+' 设的提醒','From Lili · a reminder set by '+owner);
+  $('task').textContent=r.title;
+  $('when').textContent=t(r.name+'，做完后点下面的大按钮，'+owner+'就知道了。', r.name+', tap the big button when it’s done and '+owner+' will know.');
+  $('yes').textContent=t('我做完了 ✓','I did it ✓');
+  $('stop').textContent=t('不想再收到这些短信','Stop these texts');
+  $('stop').hidden=false;
+  if(r.optedOut){$('yes').hidden=true;$('when').textContent='';$('ok').hidden=false;$('ok').textContent=t('好的，不会再给你发短信了。','OK — no more texts.');$('stop').hidden=true;return}
+  if(r.status==='confirmed'){$('yes').hidden=true;$('ok').hidden=false;$('ok').textContent=t('已告诉'+owner+' ✓','Sent to '+owner+' ✓');$('when').textContent=''}
+  else{$('yes').disabled=false}
+}
+function fail(){ $('task').textContent='链接打不开 · This link didn’t work'; $('note').textContent='可能已过期。可以直接回复短信“1”。 It may have expired — you can reply 1 to the text instead.'; }
+if(!token){fail()} else {post('peek').then(function(r){r.error?fail():show(r)}).catch(fail)}
+$('yes').onclick=function(){ $('yes').disabled=true; post('confirm').then(function(r){ if(r.error){fail();return} show(r); if(r.status!=='confirmed'){ $('note').textContent=t('这条提醒已超过一天，没能确认。','This reminder is over a day old and could not be confirmed.') } }).catch(function(){ $('yes').disabled=false; $('note').textContent=t('网络不太好，再点一次试试。','Connection problem — try again.') }) };
+$('stop').onclick=function(){ if(confirm(t('以后不再收到'+(info&&info.owner||'家人')+'通过栗栗发的提醒短信？','Stop receiving reminder texts sent through Lili?'))){ post('optout').then(show) } };
+</script>
+</main></body></html>
