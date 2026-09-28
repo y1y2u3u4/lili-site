@@ -24,6 +24,8 @@ h1{font-size:30px;line-height:1.35}
 <button class="link" id="stop" hidden>不想再收到这些短信</button>
 <script>
 var API='https://ienodkjngoywicwsoixg.supabase.co/functions/v1/lili-care';
+// A second text's link opens in the same tab with only the #token changed — reload so it shows that reminder.
+window.addEventListener('hashchange',function(){location.reload()});
 var token=(location.hash||'').slice(1).replace(/[^2-9A-HJ-NP-Za-km-z]/g,'').slice(0,10);
 var $=function(id){return document.getElementById(id)}, zh=true, info=null;
 function t(a,b){return zh?a:b}
