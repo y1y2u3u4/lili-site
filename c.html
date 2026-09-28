@@ -17,7 +17,7 @@ h1{font-size:30px;line-height:1.35}
 <div class="card">
   <p class="task" id="task">正在打开…</p>
   <p class="muted" id="when"></p>
-  <button class="btn" id="yes" disabled>我做完了 ✓</button>
+  <button class="btn" id="yes" hidden>我做完了 ✓</button>
   <p class="done" id="ok" hidden></p>
 </div>
 <p class="muted" id="note"></p>
@@ -42,7 +42,7 @@ function show(r){
   $('stop').hidden=false;
   if(r.optedOut){$('yes').hidden=true;$('when').textContent='';$('ok').hidden=false;$('ok').textContent=t('好的，不会再给你发短信了。','OK — no more texts.');$('stop').hidden=true;return}
   if(r.status==='confirmed'){$('yes').hidden=true;$('ok').hidden=false;$('ok').textContent=t('已告诉'+owner+' ✓','Sent to '+owner+' ✓');$('when').textContent=''}
-  else{$('yes').disabled=false}
+  else{$('yes').hidden=false;$('yes').disabled=false}
 }
 function fail(){ $('task').textContent='链接打不开 · This link didn’t work'; $('note').textContent='可能已过期。可以直接回复短信“1”。 It may have expired — you can reply 1 to the text instead.'; }
 if(!token){fail()} else {post('peek').then(function(r){r.error?fail():show(r)}).catch(fail)}
